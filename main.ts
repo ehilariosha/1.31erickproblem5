@@ -12,6 +12,28 @@ function resetGame () {
     game.splash("Press A for new game")
     game.reset()
 }
+function getNextCursorLockLeft () {
+    if (cursorCol > 0 && grid[cursorRow][cursorCol - 1] == "") {
+        cursorCol += -1
+    } else if (cursorCol == 2 && grid[cursorRow][cursorCol - 2] == "") {
+        cursorCol += -2
+    } else {
+        col4 = cursorCol - 1
+        while (col4 >= 0) {
+            for (let row = 0; row <= 2; row++) {
+                if (grid[(cursorRow + row) % 3][col4] == "") {
+                    cursorRow = (cursorRow + row) % 3
+                    cursorCol = col4
+                    drawCursor(cursorRow, cursorCol, newXOsprite)
+                    return 0
+                }
+            }
+            col4 += -1
+        }
+    }
+    drawCursor(cursorRow, cursorCol, newXOsprite)
+    return 0
+}
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     newXOsprite.setFlag(SpriteFlag.Invisible, false)
     insertPlayerMove(cursorRow, cursorCol, XorOturn)
@@ -31,6 +53,26 @@ controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
     }
     drawCursor(cursorRow, cursorCol, newXOsprite)
 })
+function getNextCursorLockUp () {
+    if (cursorRow > 0 && grid[cursorRow - 1][cursorCol] == "") {
+        cursorRow += -1
+    } else {
+        row4 = 0
+        while (row4 <= 2) {
+            for (let col = 0; col <= 2; col++) {
+                if (grid[row4][(cursorCol + col) % 3] == "") {
+                    cursorRow = row4
+                    cursorCol = (cursorCol + col) % 3
+                    drawCursor(cursorRow, cursorCol, newXOsprite)
+                    return 0
+                }
+            }
+            row4 += 1
+        }
+    }
+    drawCursor(cursorRow, cursorCol, newXOsprite)
+    return 0
+}
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
     if (cursorCol < 2) {
         cursorCol += 1
@@ -49,6 +91,28 @@ function cursorBlink () {
         cursorOnOrOff = 1
     }
 }
+function getNextCursorLockRight () {
+    if (cursorCol < 2 && grid[cursorRow][cursorCol + 1] == "") {
+        cursorCol += 1
+    } else if (cursorCol == 0 && grid[cursorRow][cursorCol + 2] == "") {
+        cursorCol += 2
+    } else {
+        col4 = cursorCol + 1
+        while (col4 <= 2) {
+            for (let row3 = 0; row3 <= 2; row3++) {
+                if (grid[(cursorRow + row3) % 3][col4] == "") {
+                    cursorRow = (cursorRow + row3) % 3
+                    cursorCol = col4
+                    drawCursor(cursorRow, cursorCol, newXOsprite)
+                    return 0
+                }
+            }
+            col4 += 1
+        }
+    }
+    drawCursor(cursorRow, cursorCol, newXOsprite)
+    return 0
+}
 controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
     if (cursorRow < 2) {
         cursorRow += 1
@@ -60,6 +124,28 @@ function insertPlayerMove (row: number, col: number, player2: string) {
     for (let value of grid) {
         console.log(value)
     }
+}
+function getNextCursorLockDown () {
+    if (cursorRow < 2 && grid[cursorRow + 1][cursorCol] == "") {
+        cursorRow += 1
+    } else if (cursorRow == 0 && grid[cursorRow + 2][cursorCol] == "") {
+        cursorRow += 2
+    } else {
+        row4 = cursorRow + 1
+        while (row4 <= 2) {
+            for (let col3 = 0; col3 <= 2; col3++) {
+                if (grid[row4][(cursorCol + col3) % 3] == "") {
+                    cursorRow = row4
+                    cursorCol = (cursorCol + col3) % 3
+                    drawCursor(cursorRow, cursorCol, newXOsprite)
+                    return 0
+                }
+            }
+            row4 += 1
+        }
+    }
+    drawCursor(cursorRow, cursorCol, newXOsprite)
+    return 0
 }
 function changePlayer () {
     if (XorOturn == "X") {
@@ -102,6 +188,8 @@ function isWinner (player2: string) {
 let winningDiagonal: string[] = []
 let winningCol: string[] = []
 let winningRow: string[] = []
+let row4 = 0
+let col4 = 0
 let newXOsprite: TextSprite = null
 let cursorOnOrOff = 0
 let cursorCol = 0
